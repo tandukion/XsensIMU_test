@@ -1,0 +1,71 @@
+datapacket_p.c.o: datapacket_p.cpp datapacket_p.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsmessage.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xstypesconfig.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xstypedefs.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/pstdint.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsbytearray.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsarray.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsstring.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsdataidentifier.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsdataidentifiervalue.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsxbusmessageid.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsdeviceid.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xstimestamp.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsquaternion.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsmath.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsushortvector.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsvector3.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsvector.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsscrdata.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsushortvector.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xstriggerindicationdata.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xseuler.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsmatrix3x3.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsmatrix.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrange.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsutctime.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrawgnsspvtdata.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrawgnsssatinfo.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpsdop.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpssol.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpssvinfo.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpstimeutc.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsbytearray.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xssnapshot.h \
+ /home/dwindra/code/XsensIMU_test/include/xsens/xsdeviceid.h
+datapacket_p.cpp:
+datapacket_p.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsmessage.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xstypesconfig.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xstypedefs.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/pstdint.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsbytearray.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsarray.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsstring.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsdataidentifier.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsdataidentifiervalue.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsxbusmessageid.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsdeviceid.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xstimestamp.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsquaternion.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsmath.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsushortvector.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsvector3.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsvector.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsscrdata.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsushortvector.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xstriggerindicationdata.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xseuler.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsmatrix3x3.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsmatrix.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrange.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsutctime.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrawgnsspvtdata.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrawgnsssatinfo.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpsdop.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpssol.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpssvinfo.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsrawgpstimeutc.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsbytearray.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xssnapshot.h:
+/home/dwindra/code/XsensIMU_test/include/xsens/xsdeviceid.h:

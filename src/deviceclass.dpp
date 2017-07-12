@@ -1,0 +1,72 @@
+deviceclass.cpp.o: deviceclass.cpp deviceclass.h \
+ ../include/xsens/xsresultvalue.h ../include/xsens/xstypesconfig.h \
+ ../include/xsens/xstypedefs.h ../include/xsens/pstdint.h \
+ ../include/xsens/xsbytearray.h ../include/xsens/xsarray.h \
+ ../include/xsens/xsstring.h ../include/xsens/xsmessagearray.h \
+ ../include/xsens/xsmessage.h ../include/xsens/xsbytearray.h \
+ ../include/xsens/xsdataidentifier.h \
+ ../include/xsens/xsdataidentifiervalue.h \
+ ../include/xsens/xsxbusmessageid.h ../include/xsens/xsdeviceid.h \
+ ../include/xsens/xsportinfo.h ../include/xsens/xsdeviceid.h \
+ ../include/xsens/xsbaud.h ../include/xsens/xsbaudcode.h \
+ ../include/xsens/xsbaudrate.h ../include/xsens/xsoutputmode.h \
+ ../include/xsens/xsoutputsettings.h \
+ ../include/xsens/xsoutputconfigurationarray.h \
+ ../include/xsens/xsoutputconfiguration.h \
+ ../include/xcommunication/protocolhandler.h \
+ ../include/xcommunication/xcommunicationconfig.h \
+ ../include/xcommunication/iprotocolhandler.h \
+ ../include/xcommunication/messagelocation.h ../include/xsens/xsmessage.h \
+ ../include/xcommunication/usbinterface.h ../include/xsens/xstime.h \
+ ../include/xsens/xstimestamp.h \
+ ../include/xcommunication/streaminterface.h \
+ ../include/xcommunication/iointerface.h ../include/xsens/xsplatform.h \
+ ../include/xsens/xsfilepos.h ../include/xsens/xsfile.h \
+ ../include/xsens/xsresultvalue.h ../include/xsens/xsfilepos.h \
+ ../include/xcommunication/serialinterface.h ../include/xsens/xsbaud.h \
+ ../include/xsens/xscontrolline.h \
+ ../include/xcommunication/streaminterface.h
+deviceclass.cpp:
+deviceclass.h:
+../include/xsens/xsresultvalue.h:
+../include/xsens/xstypesconfig.h:
+../include/xsens/xstypedefs.h:
+../include/xsens/pstdint.h:
+../include/xsens/xsbytearray.h:
+../include/xsens/xsarray.h:
+../include/xsens/xsstring.h:
+../include/xsens/xsmessagearray.h:
+../include/xsens/xsmessage.h:
+../include/xsens/xsbytearray.h:
+../include/xsens/xsdataidentifier.h:
+../include/xsens/xsdataidentifiervalue.h:
+../include/xsens/xsxbusmessageid.h:
+../include/xsens/xsdeviceid.h:
+../include/xsens/xsportinfo.h:
+../include/xsens/xsdeviceid.h:
+../include/xsens/xsbaud.h:
+../include/xsens/xsbaudcode.h:
+../include/xsens/xsbaudrate.h:
+../include/xsens/xsoutputmode.h:
+../include/xsens/xsoutputsettings.h:
+../include/xsens/xsoutputconfigurationarray.h:
+../include/xsens/xsoutputconfiguration.h:
+../include/xcommunication/protocolhandler.h:
+../include/xcommunication/xcommunicationconfig.h:
+../include/xcommunication/iprotocolhandler.h:
+../include/xcommunication/messagelocation.h:
+../include/xsens/xsmessage.h:
+../include/xcommunication/usbinterface.h:
+../include/xsens/xstime.h:
+../include/xsens/xstimestamp.h:
+../include/xcommunication/streaminterface.h:
+../include/xcommunication/iointerface.h:
+../include/xsens/xsplatform.h:
+../include/xsens/xsfilepos.h:
+../include/xsens/xsfile.h:
+../include/xsens/xsresultvalue.h:
+../include/xsens/xsfilepos.h:
+../include/xcommunication/serialinterface.h:
+../include/xsens/xsbaud.h:
+../include/xsens/xscontrolline.h:
+../include/xcommunication/streaminterface.h:
