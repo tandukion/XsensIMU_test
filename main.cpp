@@ -46,185 +46,164 @@
 #include <conio.h>
 #endif
 
+
+/********************************************************************/
+// init_IMU
+// Desc  : initialization of Xsens IMU by opening port with baudrate
+// Input : - portName : port of the Xsens IMU (default: /dev/ttyUSB0)
+//         - baudRate
+// Output: - *device : updated DeviceClass for the Xsens
+//         - *mtPort : updated Port name and baudrate
+/********************************************************************/
+void init_IMU(DeviceClass *device, XsPortInfo *mtPort, char *portName, int baudRate){
+
+  XsPortInfoArray portInfoArray;
+  
+  XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
+  portInfoArray.push_back(portInfo);
+
+  // Use the first detected device
+  *mtPort = portInfoArray.at(0);
+
+  // Open the port with the detected device
+  std::cout << "Opening port..." << std::endl;
+  device->openPort(*mtPort);
+}
+
+
+/********************************************************************/
+// config_IMU
+// Desc  : Configure the Xsens output mode (check manual or library)
+//         Enter Config State then return to Measurement State
+// Input : - outputMode
+//         - outputSettings 
+// Output: - *device : updated DeviceClass for the Xsens
+//         - *mtPort : updated Port name and baudrate
+/********************************************************************/
+void config_IMU(DeviceClass *device, XsPortInfo *mtPort, XsOutputMode outputMode, XsOutputSettings outputSettings){
+  
+  // Put the device in configuration mode
+  std::cout << "Putting device into configuration mode..." << std::endl;
+  device->gotoConfig();
+
+  // Request the device Id to check the device type
+  mtPort->setDeviceId(device->getDeviceId());
+
+  // Print information about detected MTi / MTx / MTmk4 device
+  std::cout << "Found a device with id: " << mtPort->deviceId().toString().toStdString() << " @ port: " << mtPort->portName().toStdString() << ", baudrate: " << mtPort->baudrate() << std::endl;
+  std::cout << "Device: " << device->getProductCode().toStdString() << " opened." << std::endl;
+  
+  
+  // Configure the device. Note the differences between MTix and MTmk4
+  std::cout << "Configuring the device..." << std::endl;
+  if (mtPort->deviceId().isMt9c() || mtPort->deviceId().isLegacyMtig())
+    {
+      /* Default Mode configuration */
+      // XsOutputMode outputMode = XOM_Orientation; // output orientation data
+      // XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion; // output orientation data as quaternion
+
+      // set the device configuration
+      device->setDeviceMode(outputMode, outputSettings);
+    }
+  else if (mtPort->deviceId().isMtMk4() || mtPort->deviceId().isFmt_X000())
+    {
+      XsOutputConfiguration quat(XDI_Quaternion, 100);
+      XsOutputConfigurationArray configArray;
+      configArray.push_back(quat);
+      device->setOutputConfiguration(configArray);
+    }
+
+  
+  // Put the device in measurement mode
+  std::cout << "Putting device into measurement mode..." << std::endl;
+  device->gotoMeasurement();
+  
+}
+
+/********************************************************************/
+// measure_IMU
+// Desc  : Measurement State, getting the data from Xsens
+// Input : - device : updated DeviceClass for the Xsens
+//         - mtPort : updated Port name and baudrate
+//         - outputMode
+//         - outputSettings 
+// Output: - quaternion
+//         - euler
+/********************************************************************/
+
+void measure_IMU(DeviceClass *device, XsPortInfo *mtPort, XsQuaternion *quaternion, XsEuler *euler){
+
+  XsByteArray data;
+  XsMessageArray msgs;
+  bool foundAck = false;
+
+  do {
+    device->readDataToBuffer(data);
+    device->processBufferedData(data, msgs);
+
+    for (XsMessageArray::iterator it = msgs.begin(); it != msgs.end(); ++it)
+      {
+	// Retrieve a packet
+	XsDataPacket packet;
+	if ((*it).getMessageId() == XMID_MtData) {
+	  LegacyDataPacket lpacket(1, false);
+	  lpacket.setMessage((*it));
+	  lpacket.setXbusSystem(false);
+	  lpacket.setDeviceId(mtPort->deviceId(), 0);
+	  lpacket.setDataFormat(XOM_Orientation, XOS_OrientationMode_Quaternion,0);//lint !e534
+	  XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
+	  foundAck = true;
+	}
+	else if ((*it).getMessageId() == XMID_MtData2) {
+	  packet.setMessage((*it));
+	  packet.setDeviceId(mtPort->deviceId());
+	  foundAck = true;
+	}
+	  
+	// Get the quaternion data
+	*quaternion = packet.orientationQuaternion();
+	  
+	// Convert packet to euler
+	*euler = packet.orientationEuler();
+      }
+  } while (!foundAck);
+  
+}
+
+
+/*********************************************************************************************/
+
 int main(int argc, char* argv[])
 {
 	DeviceClass device;
+	XsPortInfo mtPort;
+	XsQuaternion quaternion;
+	XsEuler euler;
 
-	try
-	{
-		// Scan for connected USB devices
-	        XsPortInfoArray portInfoArray;
-		std::string portName;
-		int baudRate;
-		/*	
-		std::cout << "Scanning for USB devices..." << std::endl;
-		xsEnumerateUsbDevices(portInfoArray);
-		if (!portInfoArray.size())
-		{
-#ifdef WIN32
-			std::cout << "No USB Motion Tracker found." << std::endl << std::endl << "Please enter COM port name (eg. COM1): " <<
-#else
-			std::cout << "No USB Motion Tracker found." << std::endl << std::endl << "Please enter COM port name (eg. /dev/ttyUSB0): " <<
-#endif
-			std::endl;
-			std::cin >> portName;
-			std::cout << "Please enter baud rate (eg. 115200): ";
-			std::cin >> baudRate;
+	// Xsens Configuration
+	char portName[20] = "/dev/ttyUSB0";
+	int baudRate = 921600;
+	XsOutputMode outputMode = XOM_Orientation; // output orientation data
+	XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion; // output orientation data as quaternion
 
-			XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
-			portInfoArray.push_back(portInfo);
-		}
-		*/
+	init_IMU(&device,&mtPort,portName,baudRate);
+	config_IMU(&device,&mtPort, outputMode, outputSettings);
 
-		// Directly assign the port and BaudRate
-		portName = "/dev/ttyUSB0";
-		baudRate = 921600;
-		XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
-		portInfoArray.push_back(portInfo);
-
-
-		// Use the first detected device
-		XsPortInfo mtPort = portInfoArray.at(0);
-
-		// Open the port with the detected device
-		std::cout << "Opening port..." << std::endl;
-		if (!device.openPort(mtPort))
-			throw std::runtime_error("Could not open port. Aborting.");
-
-		// Put the device in configuration mode
-		std::cout << "Putting device into configuration mode..." << std::endl;
-		if (!device.gotoConfig()) // Put the device into configuration mode before configuring the device
-		{
-			throw std::runtime_error("Could not put device into configuration mode. Aborting.");
-		}
-
-		// Request the device Id to check the device type
-		mtPort.setDeviceId(device.getDeviceId());
-
-		// Check if we have an MTi / MTx / MTmk4 device
-		if (!mtPort.deviceId().isMt9c() && !mtPort.deviceId().isLegacyMtig() && !mtPort.deviceId().isMtMk4() && !mtPort.deviceId().isFmt_X000())
-		{
-			throw std::runtime_error("No MTi / MTx / MTmk4 device found. Aborting.");
-		}
-		std::cout << "Found a device with id: " << mtPort.deviceId().toString().toStdString() << " @ port: " << mtPort.portName().toStdString() << ", baudrate: " << mtPort.baudrate() << std::endl;
-
-		try
-		{
-			// Print information about detected MTi / MTx / MTmk4 device
-			std::cout << "Device: " << device.getProductCode().toStdString() << " opened." << std::endl;
-
-			// Configure the device. Note the differences between MTix and MTmk4
-			std::cout << "Configuring the device..." << std::endl;
-			if (mtPort.deviceId().isMt9c() || mtPort.deviceId().isLegacyMtig())
-			{
-				XsOutputMode outputMode = XOM_Orientation; // output orientation data
-				XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion; // output orientation data as quaternion
-
-				// set the device configuration
-				if (!device.setDeviceMode(outputMode, outputSettings))
-				{
-					throw std::runtime_error("Could not configure MT device. Aborting.");
-				}
-			}
-			else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
-			{
-				XsOutputConfiguration quat(XDI_Quaternion, 100);
-				XsOutputConfigurationArray configArray;
-				configArray.push_back(quat);
-				if (!device.setOutputConfiguration(configArray))
-				{
-
-					throw std::runtime_error("Could not configure MTmk4 device. Aborting.");
-				}
-			}
-			else
-			{
-				throw std::runtime_error("Unknown device while configuring. Aborting.");
-			}
-
-			// Put the device in measurement mode
-			std::cout << "Putting device into measurement mode..." << std::endl;
-			if (!device.gotoMeasurement())
-			{
-				throw std::runtime_error("Could not put device into measurement mode. Aborting.");
-			}
-
-			std::cout << "\nMain loop (press any key to quit)" << std::endl;
-			std::cout << std::string(79, '-') << std::endl;
-
-			XsByteArray data;
-			XsMessageArray msgs;
-			while (!_kbhit())
-			{
-				device.readDataToBuffer(data);
-				device.processBufferedData(data, msgs);
-				for (XsMessageArray::iterator it = msgs.begin(); it != msgs.end(); ++it)
-				{
-					// Retrieve a packet
-					XsDataPacket packet;
-					if ((*it).getMessageId() == XMID_MtData) {
-						LegacyDataPacket lpacket(1, false);
-						lpacket.setMessage((*it));
-						lpacket.setXbusSystem(false);
-						lpacket.setDeviceId(mtPort.deviceId(), 0);
-						lpacket.setDataFormat(XOM_Orientation, XOS_OrientationMode_Quaternion,0);	//lint !e534
-						XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
-					}
-					else if ((*it).getMessageId() == XMID_MtData2) {
-						packet.setMessage((*it));
-						packet.setDeviceId(mtPort.deviceId());
-					}
-
-					// Get the quaternion data
-					XsQuaternion quaternion = packet.orientationQuaternion();
-					std::cout << "\r"
-							  << "W:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.w()
-							  << ",X:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.x()
-							  << ",Y:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.y()
-							  << ",Z:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.z()
-					;
-
-					// Convert packet to euler
-					XsEuler euler = packet.orientationEuler();
-					std::cout << ",Roll:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.roll()
-							  << ",Pitch:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.pitch()
-							  << ",Yaw:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.yaw()
-					;
-
-					std::cout << std::flush;
-				}
-				msgs.clear();
-				XsTime::msleep(0);
-			}
-			_getch();
-			std::cout << "\n" << std::string(79, '-') << "\n";
-			std::cout << std::endl;
-		}
-		catch (std::runtime_error const & error)
-		{
-			std::cout << error.what() << std::endl;
-		}
-		catch (...)
-		{
-			std::cout << "An unknown fatal error has occured. Aborting." << std::endl;
-		}
-
-		// Close port
-		std::cout << "Closing port..." << std::endl;
-		device.close();
-	}
-	catch (std::runtime_error const & error)
-	{
-		std::cout << error.what() << std::endl;
-	}
-	catch (...)
-	{
-		std::cout << "An unknown fatal error has occured. Aborting." << std::endl;
-	}
-
-	std::cout << "Successful exit." << std::endl;
-
-	std::cout << "Press [ENTER] to continue." << std::endl; std::cin.get();
-
+	/**/
+	std::cout << "Looping Printing by accessing function each time.." << std::endl;
+	while(1)
+	  {
+	  measure_IMU(&device,&mtPort,&quaternion,&euler);
+	  std::cout  << "\r"
+		    << "W:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.w()
+		    << ",X:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.x()
+		    << ",Y:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.y()
+		    << ",Z:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.z()
+	    ;
+	  std::cout << ",Roll:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.roll()
+		    << ",Pitch:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.pitch()
+		    << ",Yaw:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.yaw()
+		   ;
+	  }
 	return 0;
 }
