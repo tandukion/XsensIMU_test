@@ -58,7 +58,7 @@
 void init_IMU(DeviceClass *device, XsPortInfo *mtPort, char *portName, int baudRate){
 
   XsPortInfoArray portInfoArray;
-  
+
   XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
   portInfoArray.push_back(portInfo);
 
@@ -76,12 +76,12 @@ void init_IMU(DeviceClass *device, XsPortInfo *mtPort, char *portName, int baudR
 // Desc  : Configure the Xsens output mode (check manual or library)
 //         Enter Config State then return to Measurement State
 // Input : - outputMode
-//         - outputSettings 
+//         - outputSettings
 // Output: - *device : updated DeviceClass for the Xsens
 //         - *mtPort : updated Port name and baudrate
 /********************************************************************/
 void config_IMU(DeviceClass *device, XsPortInfo *mtPort, XsOutputMode outputMode, XsOutputSettings outputSettings){
-  
+
   // Put the device in configuration mode
   std::cout << "Putting device into configuration mode..." << std::endl;
   device->gotoConfig();
@@ -92,8 +92,8 @@ void config_IMU(DeviceClass *device, XsPortInfo *mtPort, XsOutputMode outputMode
   // Print information about detected MTi / MTx / MTmk4 device
   std::cout << "Found a device with id: " << mtPort->deviceId().toString().toStdString() << " @ port: " << mtPort->portName().toStdString() << ", baudrate: " << mtPort->baudrate() << std::endl;
   std::cout << "Device: " << device->getProductCode().toStdString() << " opened." << std::endl;
-  
-  
+
+
   // Configure the device. Note the differences between MTix and MTmk4
   std::cout << "Configuring the device..." << std::endl;
   if (mtPort->deviceId().isMt9c() || mtPort->deviceId().isLegacyMtig())
@@ -113,11 +113,11 @@ void config_IMU(DeviceClass *device, XsPortInfo *mtPort, XsOutputMode outputMode
       device->setOutputConfiguration(configArray);
     }
 
-  
+
   // Put the device in measurement mode
   std::cout << "Putting device into measurement mode..." << std::endl;
   device->gotoMeasurement();
-  
+
 }
 
 /********************************************************************/
@@ -126,7 +126,7 @@ void config_IMU(DeviceClass *device, XsPortInfo *mtPort, XsOutputMode outputMode
 // Input : - device : updated DeviceClass for the Xsens
 //         - mtPort : updated Port name and baudrate
 //         - outputMode
-//         - outputSettings 
+//         - outputSettings
 // Output: - quaternion
 //         - euler
 /********************************************************************/
@@ -146,6 +146,7 @@ void measure_IMU(DeviceClass *device, XsPortInfo *mtPort, XsQuaternion *quaterni
 	// Retrieve a packet
 	XsDataPacket packet;
 	if ((*it).getMessageId() == XMID_MtData) {
+    printf("MTData\n");
 	  LegacyDataPacket lpacket(1, false);
 	  lpacket.setMessage((*it));
 	  lpacket.setXbusSystem(false);
@@ -155,19 +156,20 @@ void measure_IMU(DeviceClass *device, XsPortInfo *mtPort, XsQuaternion *quaterni
 	  foundAck = true;
 	}
 	else if ((*it).getMessageId() == XMID_MtData2) {
+    printf("MTData2\n");
 	  packet.setMessage((*it));
 	  packet.setDeviceId(mtPort->deviceId());
 	  foundAck = true;
 	}
-	  
+
 	// Get the quaternion data
 	*quaternion = packet.orientationQuaternion();
-	  
+
 	// Convert packet to euler
 	*euler = packet.orientationEuler();
       }
   } while (!foundAck);
-  
+
 }
 
 
