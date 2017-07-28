@@ -157,6 +157,7 @@ void measure_IMU(DeviceClass *device, XsPortInfo *mtPort, XsQuaternion *quaterni
 	}
 	else if ((*it).getMessageId() == XMID_MtData2) {
     printf("MTData2\n");
+    
 	  packet.setMessage((*it));
 	  packet.setDeviceId(mtPort->deviceId());
 	  foundAck = true;
