@@ -146,7 +146,6 @@ void measure_IMU(DeviceClass *device, XsPortInfo *mtPort, XsQuaternion *quaterni
 	// Retrieve a packet
 	XsDataPacket packet;
 	if ((*it).getMessageId() == XMID_MtData) {
-    printf("MTData\n");
 	  LegacyDataPacket lpacket(1, false);
 	  lpacket.setMessage((*it));
 	  lpacket.setXbusSystem(false);
@@ -156,8 +155,6 @@ void measure_IMU(DeviceClass *device, XsPortInfo *mtPort, XsQuaternion *quaterni
 	  foundAck = true;
 	}
 	else if ((*it).getMessageId() == XMID_MtData2) {
-    printf("MTData2\n");
-    
 	  packet.setMessage((*it));
 	  packet.setDeviceId(mtPort->deviceId());
 	  foundAck = true;
